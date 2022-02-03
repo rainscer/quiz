@@ -1,3 +1,16 @@
+const firebaseConfig = {
+    apiKey: "AIzaSyDYQnfa-TeO0nSFaHDosR5W5Zt8mt9OW3c",
+    authDomain: "quiz-cfe2c.firebaseapp.com",
+    databaseURL: "https://quiz-cfe2c-default-rtdb.firebaseio.com",
+    projectId: "quiz-cfe2c",
+    storageBucket: "quiz-cfe2c.appspot.com",
+    messagingSenderId: "320751457995",
+    appId: "1:320751457995:web:7fcd2bd507e7816b2e6d4e",
+    measurementId: "G-7VX13ZRTSS"
+  };
+  
+  firebase.initializeApp(firebaseConfig);
+
 document.addEventListener('DOMContentLoaded', () => {
     const btnOpenModal  = document.querySelector('#btnOpenModal');
     const modalBlock = document.querySelector('#modalBlock');
@@ -12,16 +25,8 @@ document.addEventListener('DOMContentLoaded', () => {
         formAnswers.textContent = 'Loading...';
         
         setTimeout(()=> {
-            fetch(`./questions.json`)
-                .then(res => res.json())
-                .then(data => {
-                    console.log(data);
-                    playTest(data.questions);
-                })
-                .catch(err => {
-                    formAnswers.textContent = "Ошибка загрузки данных"
-                    console.error(err)
-                })
+            firebase.database().ref().child('questions').once('value')
+      .then(snap => playTest(snap.val()))
         },1000)        
     }
 
@@ -126,6 +131,11 @@ document.addEventListener('DOMContentLoaded', () => {
             checkAnswer();
             numberQuestion++;
             renderQuestions(numberQuestion);
+            firebase
+            .database()
+            .ref()
+            .child('contacts')
+            .push(finalAnswers)
             console.log(finalAnswers);
         }
     }    
